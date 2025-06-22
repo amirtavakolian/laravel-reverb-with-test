@@ -2,6 +2,7 @@
 
 namespace Models;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithExceptionHandling;
@@ -42,5 +43,14 @@ class PostTest extends TestCase
         $post = Post::factory()->for($user)->create();
 
         $this->assertEquals($user->id, $post->id);
+    }
+
+    public function test_post_has_many_comments()
+    {
+        $post = Post::factory()->hasComments(5)->create();
+
+        $this->assertDatabaseCount('comments', 5);
+
+        $this->assertInstanceOf(Comment::class, $post->comments->first());
     }
 }

@@ -2,25 +2,23 @@
 
 namespace Database\Factories;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Post>
+ * @extends Factory<Comment>
  */
-class PostFactory extends Factory
+class CommentFactory extends Factory
 {
 
     public function definition(): array
     {
         return [
-            'title' => fake()->title,
-            'description' => fake()->text,
-            'image' => "test-image.png",
-            'user_id' => User::factory()
+            'content' => fake()->text,
+            'user_id' => User::factory(),
+            'post_id' => Post::factory()
         ];
     }
 }
-
-
