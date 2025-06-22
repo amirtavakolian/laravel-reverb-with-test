@@ -42,4 +42,16 @@ class  UserTest extends TestCase
 
         $this->assertDatabaseHas('users', $user->toArray());
     }
+
+    public function test_user_relationship_with_posts()
+    {
+        $user = User::factory()->has(Post::factory())->create();
+
+        $this->assertModelExists($user->posts->first());
+
+        $this->assertInstanceOf(Post::class, $user->posts->first());
+
+        $this->assertDatabaseHas('posts', $user->posts->first()->toArray());
+
+    }
 }
