@@ -30,5 +30,13 @@ class AuthControllerTest extends TestCase
 
         $response->assertViewIs('register'); // if we change view name, this test will not pass
     }
+
+    public function test_authenticated_user_cant_see_register_form()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('register-form'));
+
+        $response->assertStatus(302);
     }
 }
