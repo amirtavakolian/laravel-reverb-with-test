@@ -39,4 +39,21 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(302);
     }
+
+    public function test_login_view_method()
+    {
+        $response = $this->get(route('login-form'));
+
+        $dom = new DOMDocument();
+        $dom->loadHTML($response->getContent());
+        $xpath = new DOMXPath($dom);
+
+        $formElement = $xpath->query('//form[@method="POST"]');
+        $passwordInputElement = $xpath->query('//input[@name="email"]');
+
+        $response->assertStatus(200);
+        $this->assertTrue(boolval($formElement->count()));
+        $this->assertTrue(boolval($passwordInputElement->count()));
+        $response->assertViewIs('login');
+    }
 }
