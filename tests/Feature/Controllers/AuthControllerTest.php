@@ -12,6 +12,8 @@ use Tests\TestCase;
 class AuthControllerTest extends TestCase
 {
 
+    use RefreshDatabase;
+
     public function test_index_method()
     {
         $response = $this->get(route('register-form'));
@@ -55,5 +57,21 @@ class AuthControllerTest extends TestCase
         $this->assertTrue(boolval($formElement->count()));
         $this->assertTrue(boolval($passwordInputElement->count()));
         $response->assertViewIs('login');
+    }
+
+    public function test_login_fails_with_invalid_username_or_password()
+    {
+        $user = User::factory()->create();
+
+        $userCredential = [
+            "email" => $user->email,
+            "password" => "13444"
+        ];
+
+        $response = $this->post(route('login'), $userCredential);
+
+        $response->assertSessionHas('login_fail');
+
+        $response->assertRedirect();
     }
 }
