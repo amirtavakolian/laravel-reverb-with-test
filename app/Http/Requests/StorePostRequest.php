@@ -21,4 +21,4 @@ class StorePostRequest extends FormRequest
             'tags.*' => 'exists:tags,id',
         ];
     }
-} 
+}

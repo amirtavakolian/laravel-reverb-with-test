@@ -25,14 +25,20 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $data = $request->validated();
+
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('posts', 'public');
         }
+
         $tags = $data['tags'] ?? [];
         unset($data['tags']);
+
+        $data['user_id'] = auth()->user()->id;
+
         $post = Post::create($data);
         $post->tags()->sync($tags);
-        return redirect()->route('post-index')->with('success', 'post created successfully');
+
+        return redirect()->route('post.index')->with('success', 'post created successfully');
     }
 
     public function show(Post $post)
