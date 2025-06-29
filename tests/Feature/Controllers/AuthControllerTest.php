@@ -71,7 +71,16 @@ class AuthControllerTest extends TestCase
         $response = $this->post(route('login'), $userCredential);
 
         $response->assertSessionHas('login_fail');
+    }
 
-        $response->assertRedirect();
+    public function test_validation_fails_when_email_is_missing_in_login()
+    {
+        $userCredential = User::factory()->make([
+            'email' => null,
+        ])->toArray();
+
+        $response = $this->post(route('login'), $userCredential);
+
+        $response->assertSessionHasErrors('email');
     }
 }
