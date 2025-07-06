@@ -111,4 +111,23 @@ class PostControllerTest extends TestCase
 
         $this->assertDatabaseMissing('comments', $comment);
     }
+
+    public function test_store_comment_method_required_data()
+    {
+        $user = User::factory()->create();
+
+        $post = Post::factory()->create();
+
+        $comment = Comment::factory()->for($post)->make()->toArray();
+
+        unset($comment['content']);
+
+        $response = $this->actingAs($user)->post(route('site.comment.store', ['post' => $post]), $comment);
+
+        $response->assertRedirect();
+
+        $response->assertSessionHasErrors([
+            'content' => 'The content field is required.',
+        ]);
+    }
 }
