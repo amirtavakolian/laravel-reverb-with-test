@@ -58,7 +58,7 @@ class PostControllerTest extends TestCase
         $this->assertInstanceOf(Tag::class, $newPost->tags[0]);
 
         $this->assertNotNull($newPost);
-        
+
         $this->assertEqualsCanonicalizing($tags, $newPost->tags->pluck('id')->toArray());
     }
 
@@ -78,5 +78,37 @@ class PostControllerTest extends TestCase
         $this->assertFileExists(storage_path('app\\public\\' . $post->image));
 
         $response->assertSessionHas('success');
+    }
+
+    public function test_authenticated_user_can_comment_on_post()
+    {
+        $user = User::factory()->create();
+
+        $post = Post::factory()->create();
+
+        $comment = Comment::factory()->for($post)->for($user)->make()->toArray();
+
+        $comment['user_id'] = $user->id;
+
+        $response = $this->actingAs($user)->post(route('site.comment.store', ['post' => $post]), $comment);
+
+        $this->assertDatabaseHas('comments', $comment);
+
+        $response->assertRedirectToRoute('site.post.show', ['post' => $post]);
+    }
+
+    public function test_not_authenticated_user_cant_comment_on_post()
+    {
+        $post = Post::factory()->create();
+
+        $comment = Comment::factory()->state([
+            'post_id' => $post
+        ])->make()->toArray();
+
+        $response = $this->post(route('site.comment.store', $post), $comment);
+
+        $response->assertRedirect();
+
+        $this->assertDatabaseMissing('comments', $comment);
     }
 }

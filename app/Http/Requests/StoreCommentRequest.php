@@ -14,8 +14,8 @@ class StoreCommentRequest extends FormRequest
     public function rules()
     {
         return [
-            'body' => 'required|string',
+            'content' => 'required|string',
             'post_id' => 'required|exists:posts,id',
         ];
     }
-} 
+}
